@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Steam Finder</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <h1 id="siteTitle">Steam Finder</h1>
+        <button id="languageToggle">EN</button>
+        <nav>
+            <ul>
+                <li><a href="#login" class="nav-link" data-key="login">Вход</a></li>
+                <li><a href="#register" class="nav-link" data-key="register">Регистрация</a></li>
+                <li><a href="#profile" class="nav-link" data-key="profile">Профиль</a></li>
+                <li><a href="#search" class="nav-link" data-key="search">Поиск игроков</a></li>
+                <li><a href="#filter" class="nav-link" data-key="filter">Фильтрация</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section id="login">
+            <h2 data-key="loginTitle">Вход</h2>
+            <form id="loginForm">
+                <input type="text" placeholder="Логин" required>
+                <input type="password" placeholder="Пароль" required>
+                <button type="submit">Войти</button>
+            </form>
+        </section>
+
+        <section id="register">
+            <h2 data-key="registerTitle">Регистрация</h2>
+            <form id="registerForm">
+                <input type="text" placeholder="Логин" required>
+                <input type="password" placeholder="Пароль" required>
+                <button type="submit">Зарегистрироваться</button>
+            </form>
+        </section>
+
+        <section id="profile">
+            <h2 data-key="profileTitle">Профиль</h2>
+            <div id="profileInfo"></div>
+        </section>
+
+        <section id="search">
+            <h2 data-key="searchTitle">Поиск игроков</h2>
+            <input type="text" id="searchQuery" placeholder="Введите имя игрока">
+            <button id="searchButton">Поиск</button>
+            <div id="searchResults"></div>
+        </section>
+
+        <section id="filter">
+            <h2 data-key="filterTitle">Фильтрация игроков</h2>
+            <input type="number" id="levelFilter" placeholder="Уровень">
+            <input type="text" id="statusFilter" placeholder="Статус">
+            <button id="filterButton">Фильтровать</button>
+            <div id="filterResults"></div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2023 Steam Finder. Все права защищены.</p>
+    </footer>
+
+    <script>
+        const translations = {
+            en: {
+                siteTitle: "Steam Finder",
+                login: "Login",
+                register: "Register",
+                profile: "Profile",
+                search: "Search Players",
+                filter: "Filter Players",
+                loginTitle: "Login",
+                registerTitle: "Register",
+                profileTitle: "Profile",
+                searchTitle: "Search Players",
+                filterTitle: "Filter Players",
+                searchPlaceholder: "Enter player name",
+                filterLevelPlaceholder: "Level",
+                filterStatusPlaceholder: "Status",
+                searchButton: "Search",
+                filterButton: "Filter",
+            },
+            ru: {
+                siteTitle: "Steam Finder",
+                login: "Вход",
+                register: "Регистрация",
+                profile: "Профиль",
+                search: "Поиск игроков",
+                filter: "Фильтрация",
+                loginTitle: "Вход",
+                registerTitle: "Регистрация",
+                profileTitle: "Профиль",
+                searchTitle: "Поиск игроков",
+                filterTitle: "Фильтрация игроков",
+                searchPlaceholder: "Введите имя игрока",
+                filterLevelPlaceholder: "Уровень",
+                filterStatusPlaceholder: "Статус",
+                searchButton: "Поиск",
+                filterButton: "Фильтровать",
+            }
+        };
+
+        let currentLanguage = 'ru';
+
+        function translatePage() {
+            document.getElementById('siteTitle').innerText = translations[currentLanguage][currentLanguage].siteTitle;
+            document.querySelectorAll('[data-key]').forEach(element => {
+                const key = element.getAttribute('data-key');
+                element.innerText = translations[currentLanguage][key];
+            });
+            document.getElementById('searchQuery').placeholder = translations[currentLanguage].searchPlaceholder;
+            document.getElementById('levelFilter').placeholder = translations[currentLanguage].filterLevelPlaceholder;
+            document.getElementById('statusFilter').placeholder = translations[currentLanguage].filterStatusPlaceholder;
+            document.getElementById('searchButton').innerText = translations[currentLanguage].searchButton;
+            document.getElementById('filterButton').innerText = translations[currentLanguage].filterButton;
+        }
+
+        document.getElementById('languageToggle').addEventListener('click', () => {
+            currentLanguage = currentLanguage === 'ru' ? 'en' : 'ru';
+            translatePage();
+            document.getElementById('languageToggle').innerText = currentLanguage === 'ru' ? 'EN' : 'RU';
+        });
+
+        translatePage(); //  перевод при загрузке страницы
+    </script>
+</body>
+</html>
