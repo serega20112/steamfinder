@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="{{ url_for('index') }}">Home</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <h1>Register</h1>
+        <form method="post">
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username" required>
+            <br>
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" required>
+            <br>
+            <label for="steam_id">Steam ID:</label>
+            <input type="text" id="steam_id" name="steam_id" required>
+            <br>
+            <label for="profile_info">Profile Info:</label>
+            <textarea id="profile_info" name="profile_info"></textarea>
+            <br>
+            <label for="discord_id">Discord ID:</label>
+            <input type="text" id="discord_id" name="discord_id">
+            <br>
+            <label for="twitch_username">Twitch Username:</label>
+            <input type="text" id="twitch_username" name="twitch_username">
+            <br>
+            <input type="submit" value="Register">
+        </form>
+        <p>Already have an account? <a href="{{ url_for('login') }}">Login</a></p>
+    </main>
+</body>
+</html>

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="{{ url_for('index') }}">Home</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <h1>Profile</h1>
+        <p>Username: {{ user.username }}</p>
+        <p>Steam ID: {{ user.steam_id }}</p>
+        <p>Profile Info: {{ user.profile_info }}</p>
+        <p>Discord ID: {{ user.discord_id }}</p>
+        <p>Twitch Username: {{ user.twitch_username }}</p>
+        <h2>Stats</h2>
+        <ul>
+            {% for stat in stats %}
+                <li>
+                    <p>Game: {{ stat.game.name }}</p>
+                    <p>Playtime: {{ stat.playtime }} hours</p>
+                    <p>Achievements: {{ stat.achievements_count }}</p>
+                </li>
+            {% endfor %}
+        </ul>
+        <h2>Achievements</h2>
+        <ul>
+            {% for achievement in achievements %}
+                <li>
+                    <p>Achievement: {{ achievement.name }}</p>
+                    <p>Game: {{ achievement.game.name }}</p>
+                    <p>Unlock Date: {{ achievement.unlock_date }}</p>
+                </li>
+            {% endfor %}
+        </ul>
+    </main>
+</body>
+</html>

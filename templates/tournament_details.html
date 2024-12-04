@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tournament Details</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="{{ url_for('index') }}">Home</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <h1>Tournament Details</h1>
+        <p>Name: {{ tournament.name }}</p>
+        <p>Description: {{ tournament.description }}</p>
+        <p>Game: {{ tournament.game.name }}</p>
+        <p>Start Date: {{ tournament.start_date }}</p>
+        <p>End Date: {{ tournament.end_date }}</p>
+        <p>Max Participants: {{ tournament.max_participants }}</p>
+        <h2>Participants</h2>
+        <ul>
+            {% for participant in tournament.participants %}
+                <li>
+                    <a href="{{ url_for('profile', username=participant.username) }}">{{ participant.username }}</a>
+                </li>
+            {% endfor %}
+        </ul>
+        {% if 'user_id' in session %}
+            <p><a href="{{ url_for('join_tournament', tournament_id=tournament.id) }}">Join Tournament</a></p>
+        {% endif %}
+    </main>
+</body>
+</html>

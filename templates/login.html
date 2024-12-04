@@ -26,25 +26,7 @@
         </nav>
     </header>
     <main>
-        <h1>Steam Finder</h1>
-        <div class="button-container">
-            <a href="{{ url_for('games') }}" class="button">Игры</a>
-            <a href="{{ url_for('tournaments') }}" class="button">Турниры</a>
-            <a href="{{ url_for('groups') }}" class="button">Группы</a>
-            <a href="{{ url_for('messages') }}" class="button">Сообщения</a>
-        </div>
-        {% if 'user_id' in session %}
-            <div class="button-container">
-                <a href="{{ url_for('profile', username=current_user.username) }}" class="button">Профиль</a>
-                <a href="{{ url_for('logout') }}" class="button">Выйти</a>
-            </div>
-        {% else %}
-            <div class="button-container">
-                <a href="{{ url_for('login') }}" class="button">Войти</a>
-                <a href="{{ url_for('register') }}" class="button">Регистрация</a>
-            </div>
-        {% endif %}
-        <h2>Featured Games</h2>
+        <h1>Featured Games</h1>
         <ul>
             {% for game in featured_games %}
                 <li>
@@ -52,7 +34,7 @@
                 </li>
             {% endfor %}
         </ul>
-        <h2>Active Tournaments</h2>
+        <h1>Active Tournaments</h1>
         <ul>
             {% for tournament in tournaments %}
                 <li>
