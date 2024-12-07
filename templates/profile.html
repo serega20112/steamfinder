@@ -3,44 +3,145 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Profile</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <title>Profile - Steam Player Finder</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+body {
+            margin: 0;
+            font-family: 'Roboto', sans-serif;
+            background-color: #0b1120;
+            color: #ffffff;
+        }
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            background-color: #111827;
+        }
+        .navbar h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+        .navbar ul {
+            list-style: none;
+            display: flex;
+            margin: 0;
+            padding: 0;
+        }
+        .navbar ul li {
+            margin-left: 20px;
+        }
+        .navbar ul li a {
+            color: #ffffff;
+            text-decoration: none;
+            font-size: 16px;
+        }
+        .navbar .auth-buttons a {
+            margin-left: 10px;
+            padding: 10px 20px;
+            border-radius: 20px;
+            text-decoration: none;
+            font-size: 16px;
+        }
+        .navbar .auth-buttons .login {
+            background-color: #1d4ed8;
+            color: #ffffff;
+        }
+        .navbar .auth-buttons .register {
+            background-color: #ffffff;
+            color: #1d4ed8;
+        }
+        .hero {
+            text-align: center;
+            padding: 100px 20px;
+        }
+        .hero h2 {
+            font-size: 48px;
+            margin: 0;
+        }
+        .features {
+            display: flex;
+            justify-content: space-around;
+            padding: 50px 20px;
+        }
+        .feature {
+            background-color: #1f2937;
+            padding: 20px;
+            border-radius: 10px;
+            width: 30%;
+            text-align: center;
+        }
+        .feature h3 {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+        .feature p {
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
+        .feature a {
+            display: inline-block;
+            padding: 10px 20px;
+            border-radius: 20px;
+            text-decoration: none;
+            font-size: 16px;
+        }
+        .feature .search {
+            background-color: #2563eb;
+            color: #ffffff;
+        }
+        .feature .communities {
+            background-color: #8b5cf6;
+            color: #ffffff;
+        }
+        .feature .stats {
+            background-color: #ec4899;
+            color: #ffffff;
+        }
+        .footer {
+            text-align: center;
+            padding: 20px;
+            background-color: #000000;
+            color: #ffffff;
+        }
+        @media (max-width: 768px) {
+            .features {
+                flex-direction: column;
+                align-items: center;
+            }
+            .feature {
+                width: 80%;
+                margin-bottom: 20px;
+            }
+        }
+    </style>
 </head>
 <body>
-    <header>
-        <nav>
-            <ul>
-                <li><a href="{{ url_for('index') }}">Home</a></li>
-            </ul>
-        </nav>
-    </header>
-    <main>
-        <h1>Profile</h1>
-        <p>Username: {{ user.username }}</p>
+    <div class="navbar">
+        <h1>Steam Player Finder</h1>
+        <ul>
+            <li><a href="/">Home</a></li>
+            <li><a href="/search">Players</a></li>
+            <li><a href="/">About</a></li>
+        </ul>
+        <div class="auth-buttons">
+            <a href="/login" class="login">Login</a>
+            <a href="/register" class="register">Register</a>
+        </div>
+    </div>
+    <div class="hero">
+        <h2>{{ user.name }}'s Profile</h2>
+    </div>
+    <div>
+        <p>Bio: {{ user.bio }}</p>
         <p>Steam ID: {{ user.steam_id }}</p>
-        <p>Profile Info: {{ user.profile_info }}</p>
-        <p>Discord ID: {{ user.discord_id }}</p>
-        <p>Twitch Username: {{ user.twitch_username }}</p>
-        <h2>Stats</h2>
-        <ul>
-            {% for stat in stats %}
-                <li>
-                    <p>Game: {{ stat.game.name }}</p>
-                    <p>Playtime: {{ stat.playtime }} hours</p>
-                    <p>Achievements: {{ stat.achievements_count }}</p>
-                </li>
-            {% endfor %}
-        </ul>
-        <h2>Achievements</h2>
-        <ul>
-            {% for achievement in achievements %}
-                <li>
-                    <p>Achievement: {{ achievement.name }}</p>
-                    <p>Game: {{ achievement.game.name }}</p>
-                    <p>Unlock Date: {{ achievement.unlock_date }}</p>
-                </li>
-            {% endfor %}
-        </ul>
-    </main>
+        <a href="/link_steam/{{ user.id }}">Link Steam Profile</a>
+        <a href="/add_game/{{ user.id }}">Add Game</a>
+    </div>
+    <div class="footer">
+        <p>© 2023 Steam Player Finder. All rights reserved.</p>
+    </div>
 </body>
 </html>

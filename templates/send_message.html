@@ -1,13 +1,14 @@
 <!DOCTYPE html>
+ ```html
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Steam Player Finder</title>
+    <title>Send Message - Steam Player Finder</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        body {
+body {
             margin: 0;
             font-family: 'Roboto', sans-serif;
             background-color: #0b1120;
@@ -132,25 +133,15 @@
         </div>
     </div>
     <div class="hero">
- <h2>Find Your Gaming Partners</h2>
+        <h2>Send Message to {{ recipient.name }}</h2>
     </div>
-    <div class="features">
-        <div class="feature">
-            <h3>Search Players <i class="fas fa-search"></i></h3>
-            <p>Use our advanced search to find players based on games, level, and more.</p>
-            <a href="/search" class="search">Start Searching</a>
+    <form method="POST">
+        <div>
+            <label for="content">Message:</label>
+            <textarea name="content" required></textarea>
         </div>
-        <div class="feature">
-            <h3>Join Communities <i class="fas fa-users"></i></h3>
-            <p>Connect with gaming communities and expand your network.</p>
-            <a href="/" class="communities">Explore Communities</a>
-        </div>
-        <div class="feature">
-            <h3>Track Statistics <i class="fas fa-chart-bar"></i></h3>
-            <p>Monitor your gameplay statistics and achievements.</p>
-            <a href="/" class="stats">View Stats</a>
-        </div>
-    </div>
+        <button type="submit">Send Message</button>
+    </form>
     <div class="footer">
         <p>© 2023 Steam Player Finder. All rights reserved.</p>
     </div>

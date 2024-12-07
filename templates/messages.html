@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Steam Player Finder</title>
+    <title>Messages - Steam Player Finder</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        body {
+ body {
             margin: 0;
             font-family: 'Roboto', sans-serif;
             background-color: #0b1120;
@@ -132,24 +132,17 @@
         </div>
     </div>
     <div class="hero">
- <h2>Find Your Gaming Partners</h2>
+        <h2>Your Messages</h2>
     </div>
-    <div class="features">
-        <div class="feature">
-            <h3>Search Players <i class="fas fa-search"></i></h3>
-            <p>Use our advanced search to find players based on games, level, and more.</p>
-            <a href="/search" class="search">Start Searching</a>
-        </div>
-        <div class="feature">
-            <h3>Join Communities <i class="fas fa-users"></i></h3>
-            <p>Connect with gaming communities and expand your network.</p>
-            <a href="/" class="communities">Explore Communities</a>
-        </div>
-        <div class="feature">
-            <h3>Track Statistics <i class="fas fa-chart-bar"></i></h3>
-            <p>Monitor your gameplay statistics and achievements.</p>
-            <a href="/" class="stats">View Stats</a>
-        </div>
+    <div>
+        {% for message in messages %}
+            <div>
+                <p><strong>From:</strong> {{ message.sender.name }}</p>
+                <p>{{ message.content }}</p>
+                <p><em>{{ message.timestamp }}</em></p>
+                <a href="/send_message/{{ message.sender.id }}">Reply</a>
+            </div>
+        {% endfor %}
     </div>
     <div class="footer">
         <p>© 2023 Steam Player Finder. All rights reserved.</p>

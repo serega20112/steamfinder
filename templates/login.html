@@ -3,45 +3,126 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Steam Finder</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <title>Login - Steam Player Finder</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Roboto', sans-serif;
+            background-color: #0b1120;
+            color: #ffffff;
+        }
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            background-color: #111827;
+        }
+        .navbar h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+        .navbar ul {
+            list-style: none;
+            display: flex;
+            margin: 0;
+            padding: 0;
+        }
+        .navbar ul li {
+            margin-left: 20px;
+        }
+        .navbar ul li a {
+            color: #ffffff;
+            text-decoration: none;
+            font-size: 16px;
+        }
+        .auth-buttons a {
+            margin-left: 10px;
+            padding: 10px 20px;
+            border-radius: 20px;
+            text-decoration: none;
+            font-size: 16px;
+        }
+        .auth-buttons .login {
+            background-color: #1d4ed8;
+            color: #ffffff;
+        }
+        .auth-buttons .register {
+            background-color: #ffffff;
+            color: #1d4ed8;
+        }
+        .hero {
+            text-align: center;
+            padding: 100px 20px;
+        }
+        .form-container {
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #1f2937;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+        }
+        .form-container h2 {
+            margin-bottom: 20px;
+        }
+        .form-container input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: none;
+            border-radius: 5px;
+            background-color: #2d3748;
+            color: #ffffff;
+        }
+        .form-container button {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            background-color: #2563eb;
+            color: #ffffff;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        .form-container button:hover {
+            background-color: #1d4ed8;
+        }
+        .footer {
+            text-align: center;
+            padding: 20px;
+            background-color: #000000;
+            color: #ffffff;
+        }
+    </style>
 </head>
 <body>
-    <header>
-        <nav>
-            <ul>
-                <li><a href="{{ url_for('index') }}">Home</a></li>
-                <li><a href="{{ url_for('games') }}">Games</a></li>
-                <li><a href="{{ url_for('tournaments') }}">Tournaments</a></li>
-                <li><a href="{{ url_for('groups') }}">Groups</a></li>
-                <li><a href="{{ url_for('messages') }}">Messages</a></li>
-                {% if 'user_id' in session %}
-                    <li><a href="{{ url_for('profile', username=current_user.username) }}">Profile</a></li>
-                    <li><a href="{{ url_for('logout') }}">Logout</a></li>
-                {% else %}
-                    <li><a href="{{ url_for('login') }}">Login</a></li>
-                    <li><a href="{{ url_for('register') }}">Register</a></li>
-                {% endif %}
-            </ul>
-        </nav>
-    </header>
-    <main>
-        <h1>Featured Games</h1>
+    <div class="navbar">
+        <h1>Steam Player Finder</h1>
         <ul>
-            {% for game in featured_games %}
-                <li>
-                    <a href="{{ url_for('game_details', game_id=game.steam_id) }}">{{ game.name }}</a>
-                </li>
-            {% endfor %}
+            <li><a href="/">Home</a></li>
+            <li><a href="/search">Players</a></li>
+            <li><a href="/">About</a></li>
         </ul>
-        <h1>Active Tournaments</h1>
-        <ul>
-            {% for tournament in tournaments %}
-                <li>
-                    <a href="{{ url_for('tournament_details', tournament_id=tournament.id) }}">{{ tournament.name }}</a>
-                </li>
-            {% endfor %}
-        </ul>
-    </main>
+        <div class="auth-buttons">
+            <a href="/login" class="login">Login</a>
+            <a href="/register" class="register">Register</a>
+        </div>
+    </div>
+    <div class="hero">
+        <h2>Login</h2>
+    </div>
+    <div class="form-container">
+        <form method="POST">
+            <h2>Welcome Back!</h2>
+            <input type="text" name="name" placeholder="Enter your name" required>
+            <button type="submit">Login</button>
+        </form>
+    </div>
+    <div class="footer">
+        <p>© 2023 Steam Player Finder. All rights reserved.</p>
+    </div>
 </body>
 </html>
