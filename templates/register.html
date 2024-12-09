@@ -117,8 +117,22 @@
     <div class="form-container">
         <form method="POST">
             <h2>Create Your Account</h2>
+            
+            <!-- Имя -->
             <input type="text" name="name" placeholder="Enter your name" required>
+
+            <!-- Описание -->
             <textarea name="bio" placeholder="Tell us about yourself"></textarea>
+
+            <!-- Ссылка на профиль Steam -->
+            <input type="url" name="steam_link" placeholder="Your Steam profile link (e.g., https://steamcommunity.com/id/your_profile)" required>
+
+            <!-- FACEIT ELO -->
+            <input type="number" name="faceit_elo" placeholder="FACEIT ELO (optional)">
+
+            <!-- Общее время в играх -->
+            <input type="number" name="total_playtime" placeholder="Total playtime in hours (optional)">
+
             <button type="submit">Register</button>
         </form>
     </div>

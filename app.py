@@ -1,3 +1,4 @@
+from flask_migrate import Migrate
 from flask import Flask, render_template, request, redirect, url_for, flash, session
 from flask_sqlalchemy import SQLAlchemy
 import random
@@ -10,20 +11,23 @@ app.config['SECRET_KEY'] = 'your_secret_key'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///steam_finder.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
+migrate = Migrate(app, db)
 
 # Модели базы данных
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     steam_id = db.Column(db.String(50), unique=True, nullable=True)
+    steam_link = db.Column(db.String(200), unique=True, nullable=False)  # Обязательное поле
     name = db.Column(db.String(100), nullable=False)
     bio = db.Column(db.Text, nullable=True)
+    faceit_elo = db.Column(db.Integer, nullable=True)
+    total_playtime = db.Column(db.Integer, nullable=True)
     games = db.relationship('Game', secondary='user_games', backref=db.backref('users', lazy='dynamic'))
     friends = db.relationship('User', secondary='friendships',
                             primaryjoin='User.id==friendships.c.user_id',
                             secondaryjoin='User.id==friendships.c.friend_id',
                             backref=db.backref('friends_of', lazy='dynamic'), lazy='dynamic')
     messages = db.relationship('Message', backref='sender', lazy='dynamic')
-
 
 class Game(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -46,6 +50,10 @@ class Message(db.Model):
     content = db.Column(db.Text, nullable=False)
     timestamp = db.Column(db.DateTime, default=datetime.utcnow)
 
+# Create all tables
+with app.app_context():
+    db.create_all()
+
 # Маршруты
 @app.route('/')
 def index():
@@ -56,13 +64,31 @@ def register():
     if request.method == 'POST':
         name = request.form['name']
         bio = request.form.get('bio', 'No bio')
-        user = User(name=name, bio=bio)
+        steam_link = request.form['steam_link']
+        faceit_elo = request.form.get('faceit_elo', type=int)
+        total_playtime = request.form.get('total_playtime', type=int)
+
+        # Проверка формата ссылки
+        if not steam_link.startswith("https://steamcommunity.com/"):
+            flash('Введите корректную ссылку на профиль Steam.', 'danger')
+            return redirect(url_for('register'))
+
+        # Проверка на уникальность ссылки
+        if User.query.filter_by(steam_link=steam_link).first():
+            flash('Этот профиль Steam уже используется.', 'danger')
+            return redirect(url_for('register'))
+
+        # Создание пользователя
+        user = User(name=name, bio=bio, steam_link=steam_link, faceit_elo=faceit_elo, total_playtime=total_playtime)
         db.session.add(user)
         db.session.commit()
+
         session['user_id'] = user.id
-        flash('User registered successfully!', 'success')
+        flash('Пользователь успешно зарегистрирован!', 'success')
         return redirect(url_for('profile', user_id=user.id))
+
     return render_template('register.html')
+
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -182,7 +208,7 @@ def add_game(user_id):
         return redirect(url_for('profile', user_id=user.id))
     return render_template('add_game.html', user=user)
 
+# Запуск приложения
 if __name__ == '__main__':
-    with app.app_context():
-        db.create_all()
     app.run(debug=True, host='0.0.0.0', port=5000)
+
