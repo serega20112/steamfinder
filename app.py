@@ -5,7 +5,6 @@ import random
 import string
 from datetime import datetime
 
-
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'your_secret_key'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///steam_finder.db'
@@ -13,21 +12,28 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 
-# Модели базы данных
+# Database Models
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     steam_id = db.Column(db.String(50), unique=True, nullable=True)
-    steam_link = db.Column(db.String(200), unique=True, nullable=False)  # Обязательное поле
+    steam_link = db.Column(db.String(200), unique=True, nullable=False)
     name = db.Column(db.String(100), nullable=False)
     bio = db.Column(db.Text, nullable=True)
     faceit_elo = db.Column(db.Integer, nullable=True)
     total_playtime = db.Column(db.Integer, nullable=True)
+    profile_url = db.Column(db.String(200), unique=True, nullable=False)  # New field for custom profile URL
     games = db.relationship('Game', secondary='user_games', backref=db.backref('users', lazy='dynamic'))
     friends = db.relationship('User', secondary='friendships',
                             primaryjoin='User.id==friendships.c.user_id',
                             secondaryjoin='User.id==friendships.c.friend_id',
                             backref=db.backref('friends_of', lazy='dynamic'), lazy='dynamic')
     messages = db.relationship('Message', backref='sender', lazy='dynamic')
+
+    def generate_profile_url(self):
+        # Generate profile URL from name and steam_id
+        if self.steam_id:
+            return f"{self.name.lower().replace(' ', '-')}_{self.steam_id}"
+        return f"{self.name.lower().replace(' ', '-')}"
 
 class Game(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -54,7 +60,6 @@ class Message(db.Model):
 with app.app_context():
     db.create_all()
 
-# Маршруты
 @app.route('/')
 def index():
     return render_template('index.html')
@@ -68,73 +73,78 @@ def register():
         faceit_elo = request.form.get('faceit_elo', type=int)
         total_playtime = request.form.get('total_playtime', type=int)
 
-        # Проверка формата ссылки
+        # Check Steam link format
         if not steam_link.startswith("https://steamcommunity.com/"):
-            flash('Введите корректную ссылку на профиль Steam.', 'danger')
+            flash('Please enter a valid Steam profile link.', 'danger')
             return redirect(url_for('register'))
 
-        # Проверка на уникальность ссылки
-        if User.query.filter_by(steam_link=steam_link).first():
-            flash('Этот профиль Steam уже используется.', 'danger')
-            return redirect(url_for('register'))
+        # Extract Steam ID from the link
+        steam_id = None
+        if 'profiles/' in steam_link:
+            steam_id = steam_link.split('profiles/')[-1].split('/')[0]
+        elif 'id/' in steam_link:
+            steam_id = steam_link.split('id/')[-1].split('/')[0]
 
-        # Создание пользователя
-        user = User(name=name, bio=bio, steam_link=steam_link, faceit_elo=faceit_elo, total_playtime=total_playtime)
+        # Create user
+        user = User(
+            name=name,
+            bio=bio,
+            steam_link=steam_link,
+            steam_id=steam_id,
+            faceit_elo=faceit_elo,
+            total_playtime=total_playtime
+        )
+        
+        # Generate and set profile URL
+        user.profile_url = user.generate_profile_url()
+        
         db.session.add(user)
         db.session.commit()
 
         session['user_id'] = user.id
-        flash('Пользователь успешно зарегистрирован!', 'success')
-        return redirect(url_for('profile', user_id=user.id))
+        flash('User registered successfully!', 'success')
+        return redirect(url_for('view_profile', profile_url=user.profile_url))
 
     return render_template('register.html')
 
-
-@app.route('/login', methods=['GET', 'POST'])
-def login():
-    if request.method == 'POST':
-        name = request.form['name']
-        user = User.query.filter_by(name=name).first()
-        if user:
-            session['user_id'] = user.id
-            return redirect(url_for('profile', user_id=user.id))
-        else:
-            flash('User not found', 'danger')
-    return render_template('login.html')
-
-@app.route('/profile/<int:user_id>')
-def profile(user_id):
-    user = User.query.get_or_404(user_id)
-    if not user.steam_id:
-        flash('Please link your Steam profile to use this feature.', 'warning')
-        return redirect(url_for('link_steam', user_id=user.id))
-    return render_template('profile.html', user=user)
-
-@app.route('/link_steam/<int:user_id>', methods=['GET', 'POST'])
-def link_steam(user_id):
-    user = User.query.get_or_404(user_id)
-    if request.method == 'POST':
-        steam_id = request.form['steam_id']
-        user.steam_id = steam_id
-        db.session.commit()
-        flash('Steam profile linked successfully!', 'success')
-        return redirect(url_for('profile', user_id=user.id))
-    return render_template('link_steam.html', user=user)
+@app.route('/profile/<profile_url>')
+def view_profile(profile_url):
+    user = User.query.filter_by(profile_url=profile_url).first_or_404()
+    return render_template('user_profile.html', user=user)
 
 @app.route('/search', methods=['GET', 'POST'])
 def search():
     user_id = session.get('user_id')
     if not user_id:
         return redirect(url_for('login'))
+    
     user = User.query.get_or_404(user_id)
     if not user.steam_id:
         flash('Please link your Steam profile to use this feature.', 'warning')
         return redirect(url_for('link_steam', user_id=user.id))
+    
     if request.method == 'POST':
         game_name = request.form['game_name']
         games = Game.query.filter(Game.name.ilike(f'%{game_name}%')).all()
-        return render_template('search.html', games=games)
-    return render_template('search.html')
+        return render_template('search.html', games=games, popular_players=[])
+    
+    # List of 10 real esports players with profile URLs
+    popular_players = [
+        {"name": "Niko", "steam_link": "https://steamcommunity.com/profiles/76561197989736583", "bio": "Pro CS:GO Player", "faceit_elo": 3000, "id": 1, "profile_url": "niko_76561197989736583"},
+        {"name": "m0NESY", "steam_link": "https://steamcommunity.com/id/m0NESY-/", "bio": "Young CS:GO talent", "faceit_elo": 3500, "id": 2, "profile_url": "m0nesy_76561198113666193"},
+        {"name": "ZywOo", "steam_link": "https://steamcommunity.com/profiles/76561198113666193/", "bio": "Top 1 CS GO Player", "faceit_elo": 3700, "id": 3, "profile_url": "zywoo_76561198113666193"},
+        {"name": "s1mple", "steam_link": "https://steamcommunity.com/profiles/[U:1:338040518]", "bio": "The GOAT", "faceit_elo": 4000, "id": 4, "profile_url": "s1mple_338040518"},
+        {"name": "device", "steam_link": "https://steamcommunity.com/id/deviceCS", "bio": "Legendary Danish AWPer", "faceit_elo": 3200, "id": 5, "profile_url": "device_76561197987713664"},
+        {"name": "ropz", "steam_link": "https://steamcommunity.com/id/ropzicle", "bio": "Silent Assassin", "faceit_elo": 3300, "id": 6, "profile_url": "ropz_76561198073591392"},
+        {"name": "electroNic", "steam_link": "https://steamcommunity.com/id/electroNicNAVI", "bio": "Elite Rifler", "faceit_elo": 3100, "id": 7, "profile_url": "electronic_76561198044045107"},
+        {"name": "Twistzz", "steam_link": "https://steamcommunity.com/id/Twistzz", "bio": "Headshot Machine", "faceit_elo": 3400, "id": 8, "profile_url": "twistzz_76561198134356993"},
+        {"name": "karrigan", "steam_link": "https://steamcommunity.com/id/karriganCS", "bio": "IGL Genius", "faceit_elo": 3000, "id": 9, "profile_url": "karrigan_76561197989430253"},
+        {"name": "b1t", "steam_link": "https://steamcommunity.com/id/b1tCS", "bio": "Sharp Aimer", "faceit_elo": 3100, "id": 10, "profile_url": "b1t_76561198996712695"},
+    ]
+    
+    return render_template('search.html', games=[], popular_players=popular_players)
+
+
 
 @app.route('/add_friend/<int:user_id>/<int:friend_id>')
 def add_friend(user_id, friend_id):
@@ -211,4 +221,3 @@ def add_game(user_id):
 # Запуск приложения
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000)
-

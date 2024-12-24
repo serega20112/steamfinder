@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ user.name }}'s Profile - Steam Player Finder</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Roboto', sans-serif;
+            background-color: #0b1120;
+            color: #ffffff;
+        }
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            background-color: #111827;
+        }
+        .navbar h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+        .navbar ul {
+            list-style: none;
+            display: flex;
+            margin: 0;
+            padding: 0;
+        }
+        .navbar ul li {
+            margin-left: 20px;
+        }
+        .navbar ul li a {
+            color: #ffffff;
+            text-decoration: none;
+            font-size: 16px;
+        }
+        .profile-container {
+            padding: 50px 20px;
+            text-align: center;
+        }
+        .profile-container h2 {
+            font-size: 36px;
+        }
+        .profile-container p {
+            font-size: 18px;
+            color: #cbd5e0;
+        }
+        .profile-container a {
+            display: inline-block;
+            margin-top: 20px;
+            text-decoration: none;
+            color: #2563eb;
+        }
+        .footer {
+            text-align: center;
+            padding: 20px;
+            background-color: #000000;
+            color: #ffffff;
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <h1>Steam Player Finder</h1>
+        <ul>
+            <li><a href="/">Home</a></li>
+            <li><a href="/search">Players</a></li>
+            <li><a href="/">About</a></li>
+        </ul>
+    </div>
+    <div class="profile-container">
+        <h2>{{ user.name }}'s Profile</h2>
+        <p><strong>Bio:</strong> {{ user.bio or "No bio available" }}</p>
+        <p><strong>Steam Profile:</strong> <a href="{{ user.steam_link }}" target="_blank">Visit Profile</a></p>
+        <p><strong>FACEIT ELO:</strong> {{ user.faceit_elo or "N/A" }}</p>
+        <p><strong>Total Playtime:</strong> {{ user.total_playtime or "N/A" }} hours</p>
+    </div>
+    <div class="footer">
+        <p>© 2024 Steam Player Finder. All rights reserved.</p>
+    </div>
+</body>
+</html>
